@@ -44,14 +44,14 @@ fi
 if [ -f "$SETTINGS_TS" ]; then
     echo "  - Patching Settings Paths..."
     if ! grep -q "platform() === 'android'" "$SETTINGS_TS"; then
-        sed -i "/platform() === 'win32') {/a \  } else if (platform() === 'android') {\n    return '/data/data/com.termux/files/usr/etc/gemini-cli/settings.json';" "$SETTINGS_TS"
+        sed -i "s/} else {/} else if (platform() === 'android') {\n    return '\/data\/data\/com.termux\/files\/usr\/etc\/gemini-cli\/settings.json';\n  } else {/" "$SETTINGS_TS"
     fi
 fi
 
 if [ -f "$STORAGE_TS" ]; then
     echo "  - Patching Storage Paths..."
     if ! grep -q "os.platform() === 'android'" "$STORAGE_TS"; then
-        sed -i "/os.platform() === 'win32') {/a \    } else if (os.platform() === 'android') {\n      return '/data/data/com.termux/files/usr/etc/gemini-cli';" "$STORAGE_TS"
+        sed -i "s/} else {/} else if (os.platform() === 'android') {\n      return '\/data\/data\/com.termux\/files\/usr\/etc\/gemini-cli';\n    } else {/" "$STORAGE_TS"
     fi
 fi
 
@@ -71,10 +71,20 @@ if [ -f "$GET_PTY_TS" ]; then
     fi
 fi
 
-# 6. Force Disable Sandbox on Android (unless specifically re-enabled)
+# 6. Patch Generic Linux Checks to include Android
+echo "  - Patching generic Linux checks..."
+grep -rl "=== 'linux'" "$TARGET_DIR/packages" | while read -r file; do
+    if [[ "$file" != *".test."* && "$file" != *".d.ts" ]]; then
+        sed -i "s/=== 'linux'/=== 'linux' || platform() === 'android'/g" "$file"
+        # Also handle process.platform cases
+        sed -i "s/process.platform === 'linux'/process.platform === 'linux' || process.platform === 'android'/g" "$file"
+    fi
+done
+
+# 7. Force Disable Sandbox on Android (unless specifically re-enabled)
 if [ -f "$SANDBOX_FACTORY_TS" ]; then
     echo "  - Patching Sandbox Factory..."
-    if ! grep -q "platform() === 'android'" "$SANDBOX_FACTORY_TS"; then
+    if ! grep -q "os.platform() === 'android'" "$SANDBOX_FACTORY_TS"; then
          sed -i "/if (sandbox?.enabled) {/a \    if (os.platform() === 'android') return new NoopSandboxManager(options);" "$SANDBOX_FACTORY_TS"
     fi
 fi
