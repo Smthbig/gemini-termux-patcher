@@ -8,7 +8,7 @@ Run the following command in your Termux terminal:
 
 ```bash
 # Clone this patcher
-git clone https://github.com/YOUR_USERNAME/gemini-termux-patcher.git
+git clone https://github.com/Smthbig/gemini-termux-patcher.git
 cd gemini-termux-patcher
 
 # Run the installer
