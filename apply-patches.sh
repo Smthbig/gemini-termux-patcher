@@ -20,15 +20,17 @@ SHELL_UTILS="$TARGET_DIR/packages/core/src/utils/shell-utils.ts"
 SETTINGS_TS="$TARGET_DIR/packages/cli/src/config/settings.ts"
 STORAGE_TS="$TARGET_DIR/packages/core/src/config/storage.ts"
 GET_PTY_TS="$TARGET_DIR/packages/core/src/utils/getPty.ts"
+PATHS_TS="$TARGET_DIR/packages/core/src/utils/paths.ts"
+SANDBOX_FACTORY_TS="$TARGET_DIR/packages/core/src/services/sandboxManagerFactory.ts"
+
+echo "🔧 Patching source code in $TARGET_DIR..."
 
 # 1. Patch secure-browser-launcher.ts
 if [ -f "$BROWSER_LAUNCHER" ]; then
     echo "  - Patching Browser Launcher..."
-    # Add 'android' case
     if ! grep -q "'android':" "$BROWSER_LAUNCHER"; then
         sed -i "/case 'linux':/i \    case 'android':" "$BROWSER_LAUNCHER"
     fi
-    # Fix platform check in shouldLaunchBrowser
     sed -i "s/if (platform() === 'linux') {/if (platform() === 'linux' || platform() === 'android') {/" "$BROWSER_LAUNCHER"
 fi
 
@@ -38,7 +40,7 @@ if [ -f "$SHELL_UTILS" ]; then
     sed -i "s/executable: 'bash'/executable: process.env['TERMUX_VERSION'] ? 'sh' : 'bash'/" "$SHELL_UTILS"
 fi
 
-# 3. Patch System Paths (etc)
+# 3. Patch System Paths
 if [ -f "$SETTINGS_TS" ]; then
     echo "  - Patching Settings Paths..."
     if ! grep -q "platform() === 'android'" "$SETTINGS_TS"; then
@@ -53,12 +55,27 @@ if [ -f "$STORAGE_TS" ]; then
     fi
 fi
 
-# 4. Patch getPty.ts to prefer standard node-pty on Termux
+# 4. Patch Path Normalization for Android Case-Insensitivity (SDCard)
+if [ -f "$PATHS_TS" ]; then
+    echo "  - Patching Path Normalization..."
+    if ! grep -q "platform === 'android'" "$PATHS_TS"; then
+        sed -i "s/const isCaseInsensitive = platform === 'win32' || platform === 'darwin';/const isCaseInsensitive = platform === 'win32' || platform === 'darwin' || platform === 'android';/" "$PATHS_TS"
+    fi
+fi
+
+# 5. Patch PTY Loader
 if [ -f "$GET_PTY_TS" ]; then
     echo "  - Patching PTY Loader..."
     if ! grep -q "isTermux" "$GET_PTY_TS"; then
-        # Insert Termux detection and priority
         sed -i "/export const getPty = async (): Promise<PtyImplementation> => {/a \  const isTermux = !!process.env['TERMUX_VERSION'];\n  if (isTermux) {\n    try {\n      const nodePty = 'node-pty';\n      const module = await import(nodePty);\n      return { module, name: 'node-pty' };\n    } catch {}\n  }" "$GET_PTY_TS"
+    fi
+fi
+
+# 6. Force Disable Sandbox on Android (unless specifically re-enabled)
+if [ -f "$SANDBOX_FACTORY_TS" ]; then
+    echo "  - Patching Sandbox Factory..."
+    if ! grep -q "platform() === 'android'" "$SANDBOX_FACTORY_TS"; then
+         sed -i "/if (sandbox?.enabled) {/a \    if (os.platform() === 'android') return new NoopSandboxManager(options);" "$SANDBOX_FACTORY_TS"
     fi
 fi
 
