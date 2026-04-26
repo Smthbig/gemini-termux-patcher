@@ -5,32 +5,107 @@
 
 set -e
 
-echo "🚀 Starting Gemini CLI Full Environment Setup for Termux..."
+echo "🚀 Starting Gemini CLI Unified Workstation Setup for Termux..."
 
-# 1. Termux Environment Setup
-echo "📱 Setting up Termux environment..."
+# 1. Termux Environment & Interface Optimization
+echo "📱 Optimizing Termux interface & visuals..."
 if [ ! -d "$HOME/storage" ]; then
-    echo "  - Requesting storage access (please click 'Allow' on the popup)..."
+    echo "  - Requesting storage access..."
     termux-setup-storage
 fi
 
-# Ensure basic utilities are present
-echo "📦 Updating packages and installing dependencies..."
-pkg update -y && pkg upgrade -y
-pkg install -y nodejs python clang make binutils pkg-config libuv git termux-api
+# Visuals & Power-User Keyboard
+mkdir -p ~/.termux
+cat <<EOF > ~/.termux/termux.properties
+terminal-cursor-blink-rate = 400
+terminal-cursor-style = block
+extra-keys = [['ESC','/','-','HOME','UP','END','PGUP'], \\
+              ['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]
+EOF
+termux-reload-settings
 
-# 2. Configure Shell for Optimal Gemini Experience
-echo "🐚 Optimizing shell configuration..."
-# Set TERM to xterm-256color if not already set in .bashrc or .zshrc
+# 2. Package & Toolchain Installation
+echo "📦 Installing high-performance toolchain..."
+pkg update -y && pkg upgrade -y
+pkg install -y nodejs python clang make binutils pkg-config libuv git termux-api \\
+               ripgrep fd jq bat fzf bash-completion
+
+# 3. Git IO Acceleration
+echo "🏎️ Accelerating Git performance on Android..."
+git config --global core.preloadIndex true
+git config --global core.fscache true
+git config --global gc.auto 256
+
+# 4. Shell Optimization (~/.bashrc)
+echo "🐚 Configuring Git-aware prompt and productivity aliases..."
 SHELL_CONFIG="$HOME/.bashrc"
 [ -n "$ZSH_VERSION" ] && SHELL_CONFIG="$HOME/.zshrc"
 
-if ! grep -q "TERM=xterm-256color" "$SHELL_CONFIG" 2>/dev/null; then
-    echo 'export TERM=xterm-256color' >> "$SHELL_CONFIG"
-    echo "  - Added TERM=xterm-256color to $SHELL_CONFIG"
+# Create a optimized .bashrc snippet
+cat <<'EOF' > ~/.bashrc_gemini
+# Performance
+export NODE_OPTIONS="--max-old-space-size=2048"
+export PAGER="bat"
+export EDITOR="nano"
+
+# FZF & Completion
+[ -f /data/data/com.termux/files/usr/share/bash-completion/bash_completion ] && . /data/data/com.termux/files/usr/share/bash-completion/bash_completion
+command -v fzf >/dev/null 2>&1 && source <(fzf --bash)
+
+# Optimized Prompt
+PS1='\[\033[01;32m\]\w\[\033[00m\]$(__git_ps1 " (\[\033[01;33m\]%s\[\033[00m\])") \[\033[01;34m\]◇\[\033[00m\] '
+
+# Aliases
+alias ai="gemini"
+alias g="gemini"
+alias g-res="gemini --resume"
+alias clip="termux-clipboard-get"
+alias setclip="termux-clipboard-set"
+alias notify="termux-notification -t"
+alias work="cd /storage/emulated/0/CodeOnTheGoProjects"
+alias ll="ls -lah --color=auto"
+EOF
+
+if ! grep -q "source ~/.bashrc_gemini" "$SHELL_CONFIG"; then
+    echo "source ~/.bashrc_gemini" >> "$SHELL_CONFIG"
 fi
 
-# 3. Clone the Original Repository
+# 5. Gemini CLI Configuration (~/.gemini/)
+echo "⚙️ Configuring Gemini CLI for mobile efficiency..."
+mkdir -p ~/.gemini
+cat <<EOF > ~/.gemini/settings.json
+{
+  "ui": {
+    "inlineThinkingMode": "off",
+    "hideBanners": true,
+    "hideTips": true,
+    "hideFooterLabels": true
+  },
+  "general": {
+    "defaultApprovalMode": "auto_edit"
+  }
+}
+EOF
+
+cat <<'EOF' > ~/.gemini/GEMINI.md
+# Global Termux Optimizations
+
+## Environment Awareness:
+- Operating in **Termux on Android**. Screen space is limited.
+- **Conciseness is mandatory**: Avoid verbose explanations. Use short, direct sentences.
+- **Code First**: When asked for code, provide it immediately without excessive preamble.
+
+## Tool Preferences:
+- **Paging**: Always assume `bat` is available for viewing files with syntax highlighting.
+- **Searching**: Use `ripgrep` (`rg`) or `fd` for fast filesystem operations.
+- **Editor**: Default to `nano`.
+- **JSON**: Use `jq` for any JSON processing tasks in the shell.
+
+## Performance:
+- Be mindful of mobile CPU/Battery. Prefer single-pass shell commands over complex loops.
+EOF
+
+# 6. Clone & Patch Process
 REPO_DIR="gemini-cli-source"
 if [ -d "$REPO_DIR" ]; then
     echo "  - folder $REPO_DIR already exists. Updating..."
@@ -40,21 +115,17 @@ else
     git clone https://github.com/google-gemini/gemini-cli.git "$REPO_DIR"
 fi
 
-# 4. Apply Termux Patches
 echo "🛠️ Applying Termux-specific patches..."
 bash ./apply-patches.sh "$REPO_DIR"
 
-# 5. Build the Project
+# 7. Build
 echo "🏗️ Building Gemini CLI (this may take a few minutes)..."
 cd "$REPO_DIR"
-npm install --omit=dev || npm install # Try with omit first, fallback to full if needed
-if grep -q "\"build\":" package.json; then
-    npm run build
-fi
+npm install --omit=dev || npm install
+[ -f "package.json" ] && grep -q "\"build\":" package.json && npm run build
 
-# 6. Create Global Command
+# 8. Create Global Command
 echo "🔗 Creating 'gemini' global command..."
-# We use the built js if it exists, otherwise the entry ts
 GEMINI_BIN="$(pwd)/packages/cli/index.ts" 
 if [ -f "packages/cli/dist/index.js" ]; then
     GEMINI_BIN="$(pwd)/packages/cli/dist/index.js"
@@ -69,12 +140,8 @@ EOF
 chmod +x $PREFIX/bin/gemini
 
 echo "--------------------------------------------------"
-echo "✅ Installation & Setup Complete!"
-echo "🎉 You can now run 'gemini' from your terminal."
+echo "✅ WORKSTATION SETUP COMPLETE!"
+echo "🎉 You now have a high-performance Gemini CLI environment."
 echo "--------------------------------------------------"
-echo "💡 IMPORTANT: To use Gemini, you need an API Key."
-echo "   1. Get one at: https://aistudio.google.com/app/apikey"
-echo "   2. Add it to your shell config:"
-echo "      echo 'export GEMINI_API_KEY=your_key_here' >> $SHELL_CONFIG"
-echo "   3. Restart Termux or run: source $SHELL_CONFIG"
+echo "💡 To activate shell changes, run: source $SHELL_CONFIG"
 echo "--------------------------------------------------"

@@ -1,8 +1,8 @@
 # Gemini CLI Termux Patcher
 
-This repository provides a one-click solution to install and optimize the official [Google Gemini CLI](https://github.com/google-gemini/gemini-cli) for the Termux environment on Android.
+This repository provides a unified, high-performance solution to transform Termux into a mobile development workstation optimized for the official [Google Gemini CLI](https://github.com/google-gemini/gemini-cli).
 
-## 🚀 One-Click Installation
+## 🚀 One-Click Workstation Setup
 
 Run the following command in your Termux terminal:
 
@@ -16,21 +16,32 @@ chmod +x install.sh
 ./install.sh
 ```
 
-## 🛠️ What this patcher does:
+## 🛠️ Integrated Optimizations:
 
-1.  **Environment Preparation**: Updates Termux packages and installs all required build tools (`nodejs`, `python`, `clang`, `make`, etc.).
-2.  **Source Patching**:
-    *   **Browser Support**: Fixes `openBrowserSecurely` to use `termux-open` for authentication.
-    *   **Shell Optimization**: Configures the CLI to use Termux's native `sh` instead of assuming `/bin/bash`.
-    *   **System Paths**: Re-routes system settings to Termux-compatible paths (`/usr/etc/gemini-cli`).
-    *   **PTY Fix**: Ensures `node-pty` is built from source for your specific Android architecture, avoiding "missing binary" errors.
-3.  **Global Installation**: Creates a `gemini` command in your PATH for easy access.
+1.  **Interface & UX**:
+    *   **Power-User Keyboard**: Enabled a two-row extra key layout (ESC, TAB, CTRL, ALT, Arrows).
+    *   **Visual Polish**: Blinking block cursor for better mobile visibility.
+    *   **Smart Prompt**: Fast, Git-aware PS1 showing branch and repo status.
+2.  **Performance**:
+    *   **Memory Boost**: Increased Node.js heap limit for processing large codebases.
+    *   **Git Acceleration**: Optimized Git configuration for Android's filesystem.
+    *   **Housekeeping**: Automated repository maintenance.
+3.  **Source Patching**:
+    *   **Full Android Support**: Patch for `openBrowserSecurely` and `termux-open` integration.
+    *   **System Paths**: Correct routing for `/usr/etc/gemini-cli`.
+    *   **Native PTY**: Source-built `node-pty` for any Android architecture.
+4.  **Integrated Toolchain**:
+    *   Installs and integrates: `ripgrep`, `fd`, `jq`, `bat`, `fzf`.
+    *   **Termux-AI Bridge**: Hardware-linked aliases (`clip`, `setclip`, `notify`).
 
 ## 📝 Usage
 
 After installation, simply run:
 ```bash
 gemini
+# OR use shorthands
+g
+ai
 ```
 
 ## 🤝 Contribution
@@ -38,4 +49,5 @@ gemini
 If you find any more parts of Gemini CLI that need optimization for Termux, please open an issue or submit a pull request with a new patch logic in `apply-patches.sh`.
 
 ## Credits
-Official Gemini CLI by Google. Termux patches maintained by the community.
+Official Gemini CLI by Google. Termux workstation patches maintained by the community.
+
