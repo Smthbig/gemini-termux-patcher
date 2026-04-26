@@ -27,14 +27,16 @@ termux-reload-settings
 # 2. Package & Toolchain Installation
 echo "📦 Installing high-performance toolchain..."
 pkg update -y && pkg upgrade -y
-pkg install -y nodejs python clang make binutils pkg-config libuv git termux-api \\
-               ripgrep fd jq bat fzf bash-completion
+pkg install -y nodejs python clang make binutils pkg-config libuv git termux-api \
+               ripgrep fd jq bat fzf bash-completion openssh man fontconfig-utils
 
-# 3. Git IO Acceleration
-echo "🏎️ Accelerating Git performance on Android..."
+# 3. Git & IO Acceleration
+echo "🏎️ Accelerating Git and IO performance..."
 git config --global core.preloadIndex true
 git config --global core.fscache true
 git config --global gc.auto 256
+git config --global core.quotepath false
+git config --global help.autocorrect 1
 
 # 4. Shell Optimization (~/.bashrc)
 echo "🐚 Configuring Git-aware prompt and productivity aliases..."
@@ -47,6 +49,7 @@ cat <<'EOF' > ~/.bashrc_gemini
 export NODE_OPTIONS="--max-old-space-size=2048"
 export PAGER="bat"
 export EDITOR="nano"
+export LANG="en_US.UTF-8"
 
 # FZF & Completion
 [ -f /data/data/com.termux/files/usr/share/bash-completion/bash_completion ] && . /data/data/com.termux/files/usr/share/bash-completion/bash_completion
@@ -55,15 +58,25 @@ command -v fzf >/dev/null 2>&1 && source <(fzf --bash)
 # Optimized Prompt
 PS1='\[\033[01;32m\]\w\[\033[00m\]$(__git_ps1 " (\[\033[01;33m\]%s\[\033[00m\])") \[\033[01;34m\]◇\[\033[00m\] '
 
-# Aliases
+# Aliases: Gemini
 alias ai="gemini"
 alias g="gemini"
 alias g-res="gemini --resume"
+alias g-list="gemini --list-sessions"
+
+# Aliases: Productivity
+alias work="cd /storage/emulated/0/CodeOnTheGoProjects"
+alias ls="ls --color=auto"
+alias ll="ls -lah --color=auto"
+alias grep="grep --color=auto"
+alias ..="cd .."
+alias h="history"
+alias c="clear"
+
+# Termux AI Bridge
 alias clip="termux-clipboard-get"
 alias setclip="termux-clipboard-set"
 alias notify="termux-notification -t"
-alias work="cd /storage/emulated/0/CodeOnTheGoProjects"
-alias ll="ls -lah --color=auto"
 EOF
 
 if ! grep -q "source ~/.bashrc_gemini" "$SHELL_CONFIG"; then

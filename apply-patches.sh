@@ -6,87 +6,45 @@
 set -e
 
 TARGET_DIR=$1
+PATCHES_DIR="$(pwd)/patches"
 
 if [ -z "$TARGET_DIR" ] || [ ! -d "$TARGET_DIR" ]; then
     echo "Error: Please provide a valid target directory."
     exit 1
 fi
 
-echo "🔧 Patching source code in $TARGET_DIR..."
-
-# Define paths relative to target
-BROWSER_LAUNCHER="$TARGET_DIR/packages/core/src/utils/secure-browser-launcher.ts"
-SHELL_UTILS="$TARGET_DIR/packages/core/src/utils/shell-utils.ts"
-SETTINGS_TS="$TARGET_DIR/packages/cli/src/config/settings.ts"
-STORAGE_TS="$TARGET_DIR/packages/core/src/config/storage.ts"
-GET_PTY_TS="$TARGET_DIR/packages/core/src/utils/getPty.ts"
-PATHS_TS="$TARGET_DIR/packages/core/src/utils/paths.ts"
-SANDBOX_FACTORY_TS="$TARGET_DIR/packages/core/src/services/sandboxManagerFactory.ts"
-
-echo "🔧 Patching source code in $TARGET_DIR..."
-
-# 1. Patch secure-browser-launcher.ts
-if [ -f "$BROWSER_LAUNCHER" ]; then
-    echo "  - Patching Browser Launcher..."
-    if ! grep -q "'android':" "$BROWSER_LAUNCHER"; then
-        sed -i "/case 'linux':/i \    case 'android':" "$BROWSER_LAUNCHER"
+echo "🔧 Applying managed patches from $PATCHES_DIR..."
+cd "$TARGET_DIR"
+# Sort patches numerically to ensure correct order
+for patch in $(ls "$PATCHES_DIR"/*.patch | sort); do
+    if [ -f "$patch" ]; then
+        echo "  - Applying $(basename "$patch")..."
+        git apply "$patch" || echo "    ⚠️ Warning: Failed to apply $(basename "$patch"), it might be already applied or have conflicts."
     fi
-    sed -i "s/if (platform() === 'linux') {/if (platform() === 'linux' || platform() === 'android') {/" "$BROWSER_LAUNCHER"
-fi
+done
 
-# 2. Patch shell-utils.ts
-if [ -f "$SHELL_UTILS" ]; then
-    echo "  - Patching Shell Utils..."
-    sed -i "s/executable: 'bash'/executable: process.env['TERMUX_VERSION'] ? 'sh' : 'bash'/" "$SHELL_UTILS"
-fi
+echo "🔧 Running additional programmatic optimizations..."
 
-# 3. Patch System Paths
-if [ -f "$SETTINGS_TS" ]; then
-    echo "  - Patching Settings Paths..."
-    if ! grep -q "platform() === 'android'" "$SETTINGS_TS"; then
-        sed -i "s/} else {/} else if (platform() === 'android') {\n    return '\/data\/data\/com.termux\/files\/usr\/etc\/gemini-cli\/settings.json';\n  } else {/" "$SETTINGS_TS"
-    fi
-fi
+# 1. Patch all shebangs to Termux paths
+echo "  - Fixing shebangs..."
+grep -rl "#!/usr/bin/env" . | xargs sed -i "s|#!/usr/bin/env|#!/data/data/com.termux/files/usr/bin/env|g"
 
-if [ -f "$STORAGE_TS" ]; then
-    echo "  - Patching Storage Paths..."
-    if ! grep -q "os.platform() === 'android'" "$STORAGE_TS"; then
-        sed -i "s/} else {/} else if (os.platform() === 'android') {\n      return '\/data\/data\/com.termux\/files\/usr\/etc\/gemini-cli';\n    } else {/" "$STORAGE_TS"
-    fi
-fi
-
-# 4. Patch Path Normalization for Android Case-Insensitivity (SDCard)
-if [ -f "$PATHS_TS" ]; then
-    echo "  - Patching Path Normalization..."
-    if ! grep -q "platform === 'android'" "$PATHS_TS"; then
-        sed -i "s/const isCaseInsensitive = platform === 'win32' || platform === 'darwin';/const isCaseInsensitive = platform === 'win32' || platform === 'darwin' || platform === 'android';/" "$PATHS_TS"
-    fi
-fi
-
-# 5. Patch PTY Loader
-if [ -f "$GET_PTY_TS" ]; then
-    echo "  - Patching PTY Loader..."
-    if ! grep -q "isTermux" "$GET_PTY_TS"; then
-        sed -i "/export const getPty = async (): Promise<PtyImplementation> => {/a \  const isTermux = !!process.env['TERMUX_VERSION'];\n  if (isTermux) {\n    try {\n      const nodePty = 'node-pty';\n      const module = await import(nodePty);\n      return { module, name: 'node-pty' };\n    } catch {}\n  }" "$GET_PTY_TS"
-    fi
-fi
-
-# 6. Patch Generic Linux Checks to include Android
-echo "  - Patching generic Linux checks..."
-grep -rl "=== 'linux'" "$TARGET_DIR/packages" | while read -r file; do
+# 2. Patch generic Linux checks to include Android (if not already handled by patches)
+echo "  - Expanding generic Linux checks to support Android..."
+grep -rl "=== 'linux'" packages | while read -r file; do
     if [[ "$file" != *".test."* && "$file" != *".d.ts" ]]; then
         sed -i "s/=== 'linux'/=== 'linux' || platform() === 'android'/g" "$file"
-        # Also handle process.platform cases
         sed -i "s/process.platform === 'linux'/process.platform === 'linux' || process.platform === 'android'/g" "$file"
     fi
 done
 
-# 7. Force Disable Sandbox on Android (unless specifically re-enabled)
+# 3. Ensure local execution of native binaries (disable sandbox by default)
+SANDBOX_FACTORY_TS="packages/core/src/services/sandboxManagerFactory.ts"
 if [ -f "$SANDBOX_FACTORY_TS" ]; then
-    echo "  - Patching Sandbox Factory..."
     if ! grep -q "os.platform() === 'android'" "$SANDBOX_FACTORY_TS"; then
+         echo "  - Patching Sandbox Factory for Android..."
          sed -i "/if (sandbox?.enabled) {/a \    if (os.platform() === 'android') return new NoopSandboxManager(options);" "$SANDBOX_FACTORY_TS"
     fi
 fi
 
-echo "✨ All patches applied successfully."
+echo "✨ All patches and optimizations applied successfully."

@@ -1,0 +1,69 @@
+diff --git a/packages/cli/src/ui/utils/clipboardUtils.ts b/packages/cli/src/ui/utils/clipboardUtils.ts
+index fd46a2c74..8a82afee1 100644
+--- a/packages/cli/src/ui/utils/clipboardUtils.ts
++++ b/packages/cli/src/ui/utils/clipboardUtils.ts
+@@ -32,10 +32,17 @@ export const IMAGE_EXTENSIONS = [
+ const PATH_PREFIX_PATTERN = /^([/~.]|[a-zA-Z]:|\\\\)/;
+ 
+ // Track which tool works on Linux to avoid redundant checks/failures
+-let linuxClipboardTool: 'wl-paste' | 'xclip' | null = null;
++let linuxClipboardTool: 'wl-paste' | 'xclip' | 'termux-clipboard-get' | null = null;
+ 
+ // Helper to check the user's display server and whether they have a compatible clipboard tool installed
+ function getUserLinuxClipboardTool(): typeof linuxClipboardTool {
++  if (process.platform === 'android') {
++    try {
++      execSync('command -v termux-clipboard-get', { stdio: 'ignore' });
++      linuxClipboardTool = 'termux-clipboard-get';
++      return 'termux-clipboard-get';
++    } catch {}
++  }
+   if (linuxClipboardTool !== null) {
+     return linuxClipboardTool;
+   }
+diff --git a/packages/cli/src/utils/terminalNotifications.ts b/packages/cli/src/utils/terminalNotifications.ts
+index ea2539ff0..b4b8dfe25 100644
+--- a/packages/cli/src/utils/terminalNotifications.ts
++++ b/packages/cli/src/utils/terminalNotifications.ts
+@@ -82,6 +82,7 @@ export enum TerminalNotificationMethod {
+   Osc9 = 'osc9',
+   Osc777 = 'osc777',
+   Bell = 'bell',
++  Termux = 'termux',
+ }
+ 
+ export function getNotificationMethod(
+diff --git a/packages/cli/src/utils/terminalNotifications.ts b/packages/cli/src/utils/terminalNotifications.ts
+index ea2539ff0..b20978d3a 100644
+--- a/packages/cli/src/utils/terminalNotifications.ts
++++ b/packages/cli/src/utils/terminalNotifications.ts
+@@ -82,6 +82,7 @@ export enum TerminalNotificationMethod {
+   Osc9 = 'osc9',
+   Osc777 = 'osc777',
+   Bell = 'bell',
++  Termux = 'termux',
+ }
+ 
+ export function getNotificationMethod(
+@@ -154,6 +155,9 @@ export async function notifyViaTerminal(
+       emitOsc777Notification(content);
+     } else if (method === TerminalNotificationMethod.Bell) {
+       emitBellNotification();
++    } else if (method === TerminalNotificationMethod.Termux || (method === TerminalNotificationMethod.Auto && process.platform === 'android')) {
++      const { spawn } = await import('node:child_process');
++      spawn('termux-notification', ['-t', content.title, '-c', content.body]);
+     } else {
+       // auto
+       const capabilityManager = TerminalCapabilityManager.getInstance();
+@@ -166,7 +170,10 @@ export async function notifyViaTerminal(
+         capabilityManager.isWindowsTerminal()
+       ) {
+         emitBellNotification();
+-      } else {
++      } else if (method === TerminalNotificationMethod.Termux || (method === TerminalNotificationMethod.Auto && process.platform === 'android')) {
++      const { spawn } = await import('node:child_process');
++      spawn('termux-notification', ['-t', content.title, '-c', content.body]);
++    } else {
+         emitOsc777Notification(content);
+       }
+     }

@@ -1,0 +1,488 @@
+diff --git a/.gemini/skills/ci/scripts/ci.mjs b/.gemini/skills/ci/scripts/ci.mjs
+index 907328523..d5ca164ff 100755
+--- a/.gemini/skills/ci/scripts/ci.mjs
++++ b/.gemini/skills/ci/scripts/ci.mjs
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/.gemini/skills/pr-address-comments/scripts/fetch-pr-info.js b/.gemini/skills/pr-address-comments/scripts/fetch-pr-info.js
+index be465d17f..6a5e8cdf0 100755
+--- a/.gemini/skills/pr-address-comments/scripts/fetch-pr-info.js
++++ b/.gemini/skills/pr-address-comments/scripts/fetch-pr-info.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ /**
+  * @license
+  * Copyright 2025 Google LLC
+diff --git a/.github/scripts/pr-triage.sh b/.github/scripts/pr-triage.sh
+index 92200ee4d..378bbbee4 100755
+--- a/.github/scripts/pr-triage.sh
++++ b/.github/scripts/pr-triage.sh
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ # @license
+ # Copyright 2026 Google LLC
+ # SPDX-License-Identifier: Apache-2.0
+diff --git a/docs/cli/plan-mode.md b/docs/cli/plan-mode.md
+index 4e205164a..cbd340e2e 100644
+--- a/docs/cli/plan-mode.md
++++ b/docs/cli/plan-mode.md
+@@ -328,7 +328,7 @@ Storage whenever Gemini CLI exits Plan Mode to start the implementation.
+ **`.gemini/hooks/archive-plan.sh`:**
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ # Extract the plan filename from the tool input JSON
+ plan_filename=$(jq -r '.tool_input.plan_filename // empty')
+ 
+diff --git a/docs/examples/proxy-script.md b/docs/examples/proxy-script.md
+index 35780d41e..01726dfc1 100644
+--- a/docs/examples/proxy-script.md
++++ b/docs/examples/proxy-script.md
+@@ -5,7 +5,7 @@ The following is an example of a proxy script that can be used with the
+ `HTTPS` connections to `example.com:443` and declines all other requests.
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/docs/hooks/best-practices.md b/docs/hooks/best-practices.md
+index 1a4dd46de..6cf5af206 100644
+--- a/docs/hooks/best-practices.md
++++ b/docs/hooks/best-practices.md
+@@ -128,7 +128,7 @@ Since hooks run in the background, writing to a dedicated log file is often the
+ easiest way to debug complex logic.
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ LOG_FILE=".gemini/hooks/debug.log"
+ 
+ # Log with timestamp
+@@ -234,7 +234,7 @@ Gemini CLI uses exit codes for high-level flow control:
+ > the entire agent loop** immediately.
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ set -e
+ 
+ # Hook logic
+@@ -284,7 +284,7 @@ Check for:
+ Begin with basic logging hooks before implementing complex logic:
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ # Simple logging hook to understand input structure
+ input=$(cat)
+ echo "$input" >> .gemini/hook-inputs.log
+@@ -325,7 +325,7 @@ and helps diagnose issues.
+ dependencies.
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ /**
+  * RAG Tool Filter Hook
+  *
+@@ -544,7 +544,7 @@ caching.
+ **Validate JSON before outputting:**
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ output='{"decision": "allow"}'
+ 
+ # Validate JSON
+@@ -562,7 +562,7 @@ fi
+ **Check if variable is set:**
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ if [ -z "$GEMINI_PROJECT_DIR" ]; then
+   echo "GEMINI_PROJECT_DIR not set" >&2
+   exit 1
+@@ -587,7 +587,7 @@ Never trust data from hooks without validation. Hook inputs often come from the
+ LLM or user prompts, which can be manipulated.
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ input=$(cat)
+ 
+ # Validate JSON structure
+@@ -634,7 +634,7 @@ defaults to 60 seconds, but you should set stricter limits for fast hooks.
+ Run hooks with minimal required permissions:
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ # Don't run as root
+ if [ "$EUID" -eq 0 ]; then
+   echo "Hook should not run as root" >&2
+diff --git a/docs/hooks/writing-hooks.md b/docs/hooks/writing-hooks.md
+index f4f156776..46df7b512 100644
+--- a/docs/hooks/writing-hooks.md
++++ b/docs/hooks/writing-hooks.md
+@@ -33,7 +33,7 @@ Create a directory for hooks and a simple logging script.
+ ```bash
+ mkdir -p .gemini/hooks
+ cat > .gemini/hooks/log-tools.sh << 'EOF'
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ # Read hook input from stdin
+ input=$(cat)
+ 
+@@ -95,7 +95,7 @@ Prevent committing files containing API keys or passwords. Note that we use
+ **`.gemini/hooks/block-secrets.sh`:**
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ input=$(cat)
+ 
+ # Extract content being written
+@@ -129,7 +129,7 @@ Add relevant project context before each agent interaction.
+ **`.gemini/hooks/inject-context.sh`:**
+ 
+ ```bash
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ 
+ # Get recent git commits for context
+ context=$(git log -5 --oneline 2>/dev/null || echo "No git history")
+@@ -153,7 +153,7 @@ uses a Node.js script to check the user's prompt and allow only relevant tools.
+ **`.gemini/hooks/filter-tools.js`:**
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ const fs = require('fs');
+ 
+ async function main() {
+@@ -352,7 +352,7 @@ security.
+ #### 1. Initialize (`init.js`)
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ // Initialize DB or resources
+ console.error('Initializing assistant...');
+ 
+@@ -367,7 +367,7 @@ console.log(
+ #### 2. Inject Memories (`inject-memories.js`)
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ const fs = require('fs');
+ 
+ async function main() {
+@@ -390,7 +390,7 @@ main();
+ #### 3. Security Check (`security.js`)
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ const fs = require('fs');
+ const input = JSON.parse(fs.readFileSync(0));
+ const content = input.tool_input.content || '';
+@@ -412,7 +412,7 @@ console.log(JSON.stringify({ decision: 'allow' }));
+ #### 4. Record Interaction (`record.js`)
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ const fs = require('fs');
+ const path = require('path');
+ 
+@@ -438,7 +438,7 @@ console.log(JSON.stringify({}));
+ #### 5. Validate Response (`validate.js`)
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ const fs = require('fs');
+ const input = JSON.parse(fs.readFileSync(0));
+ const response = input.prompt_response;
+@@ -461,7 +461,7 @@ console.log(JSON.stringify({ decision: 'allow' }));
+ #### 6. Consolidate Memories (`consolidate.js`)
+ 
+ ```javascript
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ // Logic to save final session state
+ console.error('Consolidating memories for session end...');
+ ```
+diff --git a/integration-tests/mcp_server_cyclic_schema.test.ts b/integration-tests/mcp_server_cyclic_schema.test.ts
+index 29373dbac..eb788c8e0 100644
+--- a/integration-tests/mcp_server_cyclic_schema.test.ts
++++ b/integration-tests/mcp_server_cyclic_schema.test.ts
+@@ -28,7 +28,7 @@ import { TestRig } from './test-helper.js';
+ 
+ // Create a minimal MCP server that doesn't require external dependencies
+ // This implements the MCP protocol directly using Node.js built-ins
+-const serverScript = `#!/usr/bin/env node
++const serverScript = `#!/data/data/com.termux/files/usr/bin/env node
+ /**
+  * @license
+  * Copyright 2025 Google LLC
+diff --git a/integration-tests/simple-mcp-server.test.ts b/integration-tests/simple-mcp-server.test.ts
+index a489a00d7..1c1d553d5 100644
+--- a/integration-tests/simple-mcp-server.test.ts
++++ b/integration-tests/simple-mcp-server.test.ts
+@@ -22,7 +22,7 @@ import { writeFileSync } from 'node:fs';
+ 
+ // Create a minimal MCP server that doesn't require external dependencies
+ // This implements the MCP protocol directly using Node.js built-ins
+-const serverScript = `#!/usr/bin/env node
++const serverScript = `#!/data/data/com.termux/files/usr/bin/env node
+ /**
+  * @license
+  * Copyright 2025 Google LLC
+diff --git a/packages/a2a-server/src/http/server.ts b/packages/a2a-server/src/http/server.ts
+index c22be4933..7449a6640 100644
+--- a/packages/a2a-server/src/http/server.ts
++++ b/packages/a2a-server/src/http/server.ts
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/packages/cli/index.ts b/packages/cli/index.ts
+index d857831fb..0c8c52142 100644
+--- a/packages/cli/index.ts
++++ b/packages/cli/index.ts
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/packages/cli/src/commands/gemma/platform.ts b/packages/cli/src/commands/gemma/platform.ts
+index 0fdd6e02e..4a5ca4118 100644
+--- a/packages/cli/src/commands/gemma/platform.ts
++++ b/packages/cli/src/commands/gemma/platform.ts
+@@ -224,7 +224,7 @@ function normalizeProcessValue(value: string): string {
+ 
+ function readProcessCommandLine(pid: number): string | null {
+   try {
+-    if (process.platform === 'linux') {
++    if (process.platform === 'linux' || process.platform === 'android') {
+       const output = fs.readFileSync(`/proc/${pid}/cmdline`, 'utf-8');
+       return output.trim() ? output : null;
+     }
+diff --git a/packages/cli/src/ui/utils/clipboardUtils.ts b/packages/cli/src/ui/utils/clipboardUtils.ts
+index fd46a2c74..7317b5e96 100644
+--- a/packages/cli/src/ui/utils/clipboardUtils.ts
++++ b/packages/cli/src/ui/utils/clipboardUtils.ts
+@@ -162,7 +162,7 @@ async function checkXclipForImage() {
+  * @returns true if clipboard contains an image
+  */
+ export async function clipboardHasImage(): Promise<boolean> {
+-  if (process.platform === 'linux') {
++  if (process.platform === 'linux' || process.platform === 'android') {
+     const tool = getUserLinuxClipboardTool();
+     if (tool === 'wl-paste') {
+       if (await checkWlPasteForImage()) return true;
+@@ -279,7 +279,7 @@ export async function saveClipboardImage(
+     // Generate a unique filename with timestamp
+     const timestamp = new Date().getTime();
+ 
+-    if (process.platform === 'linux') {
++    if (process.platform === 'linux' || process.platform === 'android') {
+       const tempFilePath = path.join(tempDir, `clipboard-${timestamp}.png`);
+       const tool = getUserLinuxClipboardTool();
+ 
+diff --git a/packages/core/src/skills/builtin/skill-creator/scripts/init_skill.cjs b/packages/core/src/skills/builtin/skill-creator/scripts/init_skill.cjs
+index ea824e10a..16a2abf61 100644
+--- a/packages/core/src/skills/builtin/skill-creator/scripts/init_skill.cjs
++++ b/packages/core/src/skills/builtin/skill-creator/scripts/init_skill.cjs
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+@@ -106,7 +106,7 @@ Files not intended to be loaded into context, but rather used within the output
+ **Any unneeded directories can be deleted.** Not every skill requires all three types of resources.
+ `;
+ 
+-const EXAMPLE_SCRIPT = `#!/usr/bin/env node
++const EXAMPLE_SCRIPT = `#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * Example helper script for {skill_name}
+diff --git a/packages/core/src/skills/builtin/skill-creator/scripts/package_skill.cjs b/packages/core/src/skills/builtin/skill-creator/scripts/package_skill.cjs
+index ad0130485..3bfbe331d 100644
+--- a/packages/core/src/skills/builtin/skill-creator/scripts/package_skill.cjs
++++ b/packages/core/src/skills/builtin/skill-creator/scripts/package_skill.cjs
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/packages/core/src/utils/paths.ts b/packages/core/src/utils/paths.ts
+index fee8b8d85..8e74423cf 100644
+--- a/packages/core/src/utils/paths.ts
++++ b/packages/core/src/utils/paths.ts
+@@ -494,6 +494,6 @@ export function toPathKey(p: string): string {
+ 
+   // Convert to lowercase on case-insensitive platforms
+   const platform = process.platform;
+-  const isCaseInsensitive = platform === 'win32' || platform === 'darwin';
++  const isCaseInsensitive = platform === 'win32' || platform === 'darwin' || platform === 'android';
+   return isCaseInsensitive ? norm.toLowerCase() : norm;
+ }
+diff --git a/scripts/aggregate_evals.js b/scripts/aggregate_evals.js
+index 263660a25..f1aead212 100644
+--- a/scripts/aggregate_evals.js
++++ b/scripts/aggregate_evals.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/copy_files.js b/scripts/copy_files.js
+index d02070362..2f04cf25a 100644
+--- a/scripts/copy_files.js
++++ b/scripts/copy_files.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/create_alias.sh b/scripts/create_alias.sh
+index ecb01bb32..922904444 100755
+--- a/scripts/create_alias.sh
++++ b/scripts/create_alias.sh
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ set -euo pipefail
+ 
+ # This script creates an alias for the Gemini CLI
+diff --git a/scripts/get-release-version.js b/scripts/get-release-version.js
+index 019280aad..593a67b14 100644
+--- a/scripts/get-release-version.js
++++ b/scripts/get-release-version.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/lint.js b/scripts/lint.js
+index 0cf51cb8b..3ca9c9a40 100644
+--- a/scripts/lint.js
++++ b/scripts/lint.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/local_telemetry.js b/scripts/local_telemetry.js
+index b4cb47e56..b8c05fde6 100755
+--- a/scripts/local_telemetry.js
++++ b/scripts/local_telemetry.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/releasing/create-patch-pr.js b/scripts/releasing/create-patch-pr.js
+index 0a274e147..88feb8727 100644
+--- a/scripts/releasing/create-patch-pr.js
++++ b/scripts/releasing/create-patch-pr.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/releasing/patch-comment.js b/scripts/releasing/patch-comment.js
+index 98a26cd91..c9d6d79e5 100644
+--- a/scripts/releasing/patch-comment.js
++++ b/scripts/releasing/patch-comment.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/releasing/patch-create-comment.js b/scripts/releasing/patch-create-comment.js
+index e6863d530..84be2e161 100644
+--- a/scripts/releasing/patch-create-comment.js
++++ b/scripts/releasing/patch-create-comment.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/releasing/patch-trigger.js b/scripts/releasing/patch-trigger.js
+index b8dfa97df..35904d936 100644
+--- a/scripts/releasing/patch-trigger.js
++++ b/scripts/releasing/patch-trigger.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/telemetry.js b/scripts/telemetry.js
+index e7a96fef7..b7e1eb371 100755
+--- a/scripts/telemetry.js
++++ b/scripts/telemetry.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/telemetry_gcp.js b/scripts/telemetry_gcp.js
+index f60a05ad1..bbf5c5f6a 100755
+--- a/scripts/telemetry_gcp.js
++++ b/scripts/telemetry_gcp.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/telemetry_genkit.js b/scripts/telemetry_genkit.js
+index fc1d6331b..1063cfe66 100644
+--- a/scripts/telemetry_genkit.js
++++ b/scripts/telemetry_genkit.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license
+diff --git a/scripts/telemetry_utils.js b/scripts/telemetry_utils.js
+index 2abda4f49..9aee8686c 100644
+--- a/scripts/telemetry_utils.js
++++ b/scripts/telemetry_utils.js
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env node
++#!/data/data/com.termux/files/usr/bin/env node
+ 
+ /**
+  * @license

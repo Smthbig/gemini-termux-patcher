@@ -1,0 +1,19 @@
+diff --git a/packages/core/src/utils/getPty.ts b/packages/core/src/utils/getPty.ts
+index 27638ec1f..0eb3ce52a 100644
+--- a/packages/core/src/utils/getPty.ts
++++ b/packages/core/src/utils/getPty.ts
+@@ -18,6 +18,14 @@ export interface PtyProcess {
+ }
+ 
+ export const getPty = async (): Promise<PtyImplementation> => {
++  const isTermux = !!process.env['TERMUX_VERSION'];
++  if (isTermux) {
++    try {
++      const nodePty = 'node-pty';
++      const module = await import(nodePty);
++      return { module, name: 'node-pty' };
++    } catch {}
++  }
+   if (process.env['GEMINI_PTY_INFO'] === 'child_process') {
+     return null;
+   }

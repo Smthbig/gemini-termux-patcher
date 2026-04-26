@@ -1,0 +1,20 @@
+diff --git a/packages/cli/src/config/settingsSchema.ts b/packages/cli/src/config/settingsSchema.ts
+index 08edbd66f..b1f008a99 100644
+--- a/packages/cli/src/config/settingsSchema.ts
++++ b/packages/cli/src/config/settingsSchema.ts
+@@ -528,6 +528,7 @@ const SETTINGS_SCHEMA = {
+         showInDialog: true,
+       },
+       inlineThinkingMode: {
++        default: platform() === 'android' ? 'off' : 'off',
+         type: 'enum',
+         label: 'Inline Thinking',
+         category: 'UI',
+@@ -561,6 +562,7 @@ const SETTINGS_SCHEMA = {
+         showInDialog: true,
+       },
+       showHomeDirectoryWarning: {
++        default: platform() === 'android' ? false : true,
+         type: 'boolean',
+         label: 'Show Home Directory Warning',
+         category: 'UI',
