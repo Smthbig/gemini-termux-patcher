@@ -118,18 +118,43 @@ cat <<'EOF' > ~/.gemini/GEMINI.md
 - Be mindful of mobile CPU/Battery. Prefer single-pass shell commands over complex loops.
 EOF
 
-# 6. Clone & Patch Process
-REPO_DIR="gemini-cli-source"
+# 6. Clone & Patch Process (ROBUST VERSION)
+REPO_DIR="$HOME/gemini-cli-source"
+
+echo "📦 Preparing Gemini CLI source..."
+
 if [ -d "$REPO_DIR" ]; then
-    echo "  - folder $REPO_DIR already exists. Updating..."
-    cd "$REPO_DIR" && git pull && cd ..
+    echo "  - Existing repo found. Resetting safely..."
+
+    cd "$REPO_DIR"
+
+    # Fix detached HEAD / broken repo
+    git fetch origin
+
+    DEFAULT_BRANCH=$(git remote show origin | grep "HEAD branch" | cut -d':' -f2 | xargs)
+
+    if [ -z "$DEFAULT_BRANCH" ]; then
+        DEFAULT_BRANCH="main"
+    fi
+
+    git checkout "$DEFAULT_BRANCH" 2>/dev/null || git checkout -b "$DEFAULT_BRANCH" "origin/$DEFAULT_BRANCH"
+    git reset --hard "origin/$DEFAULT_BRANCH"
+    git clean -fd
+
+    cd -
 else
-    echo "  - git cloning original gemini-cli..."
+    echo "  - Cloning fresh repo..."
     git clone https://github.com/google-gemini/gemini-cli.git "$REPO_DIR"
 fi
 
+# Apply patches safely
 echo "🛠️ Applying Termux-specific patches..."
-bash ./apply-patches.sh "$REPO_DIR"
+
+if [ -f "./apply-patches.sh" ]; then
+    bash ./apply-patches.sh "$REPO_DIR" || echo "⚠️ Patch failed (likely version mismatch). Continuing..."
+else
+    echo "⚠️ apply-patches.sh not found, skipping patches"
+fi
 
 # 7. Build
 echo "🏗️ Building Gemini CLI (this may take a few minutes)..."

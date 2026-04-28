@@ -1,0 +1,18 @@
+diff --git a/packages/cli/src/ui/utils/terminalUtils.ts b/packages/cli/src/ui/utils/terminalUtils.ts
+index e84b2c9a1..b4b8dfe25 100644
+--- a/packages/cli/src/ui/utils/terminalUtils.ts
++++ b/packages/cli/src/ui/utils/terminalUtils.ts
+@@ -10,6 +10,13 @@
+  */
+ 
+ export function getTerminalWidth(): number {
+-  return process.stdout.columns || 80;
++  const width = process.stdout.columns || 80;
++  if (process.env['TERMUX_VERSION']) {
++    // Termux users often have small screens; ensure we don't overflow
++    // or use too much horizontal space for non-essential elements.
++    return Math.min(width, 100);
++  }
++  return width;
+ }
+EOF

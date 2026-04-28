@@ -1,0 +1,30 @@
+diff --git a/packages/core/src/detectors/platform/node/machine-id/getMachineId-linux.ts b/packages/core/src/detectors/platform/node/machine-id/getMachineId-linux.ts
+index e4c3e8a..d4b8dfe 100644
+--- a/packages/core/src/detectors/platform/node/machine-id/getMachineId-linux.ts
++++ b/packages/core/src/detectors/platform/node/machine-id/getMachineId-linux.ts
+@@ -10,6 +10,7 @@
+ import * as fs from 'fs';
+ import { diag } from '@opentelemetry/api';
+ import { promisify } from 'util';
++import * as os from 'os';
+ 
+ const readFile = promisify(fs.readFile);
+ 
+@@ -21,6 +22,17 @@ const readFile = promisify(fs.readFile);
+  * @returns the machine id, or undefined if it cannot be determined.
+  */
+ export async function getMachineId(): Promise<string | undefined> {
++  if (os.platform() === 'android') {
++    const termuxIdPath = '/data/data/com.termux/files/home/.gemini/machine-id';
++    try {
++      return (await readFile(termuxIdPath, 'utf8')).trim();
++    } catch {
++      const newId = require('crypto').randomUUID();
++      fs.mkdirSync('/data/data/com.termux/files/home/.gemini', { recursive: true });
++      fs.writeFileSync(termuxIdPath, newId);
++      return newId;
++    }
++  }
+   const paths = ['/etc/machine-id', '/var/lib/dbus/machine-id'];
+   for (const path of paths) {
+     try {

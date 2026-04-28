@@ -11,28 +11,6 @@ index b84c1bda4..ec839c7fd 100644
    } else {
      return '/etc/gemini-cli/settings.json';
    }
-@@ -226,7 +228,9 @@ function setNestedProperty(
-     if (typeof next === 'object' && next !== null) {
-       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-       current = next as Record<string, unknown>;
--    } else {
-+    } else if (platform() === 'android') {
-+    return '/data/data/com.termux/files/usr/etc/gemini-cli/settings.json';
-+  } else {
-       // This path is invalid, so we stop.
-       return;
-     }
-@@ -871,7 +875,9 @@ export function migrateDeprecatedSettings(
-           delete settings[oldKey];
-           modified = true;
-         }
--      } else {
-+      } else if (platform() === 'android') {
-+    return '/data/data/com.termux/files/usr/etc/gemini-cli/settings.json';
-+  } else {
-         // Only old exists, migrate to new (inverted)
-         settings[newKey] = !oldValue;
-         if (removeDeprecated) {
 diff --git a/packages/core/src/config/storage.ts b/packages/core/src/config/storage.ts
 index 5a40648a4..e419cfb9d 100644
 --- a/packages/core/src/config/storage.ts
@@ -78,5 +56,3 @@ index a14b28227..ff0c75139 100644
 -  return { executable: 'bash', argsPrefix: ['-c'], shell: 'bash' };
 +  return { executable: process.env['TERMUX_VERSION'] ? 'sh' : 'bash', argsPrefix: ['-c'], shell: 'bash' };
  }
- 
- /**

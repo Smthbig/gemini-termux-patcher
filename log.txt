@@ -1,0 +1,99 @@
+Accelerating Git and IO performance...
+🐚 Configuring Git-aware prompt and productivity aliases...
+grep: /data/data/com.termux/files/home/.bashrc: No such file or directory
+⚙️ Configuring Gemini CLI for mobile efficiency...
+  - git cloning original gemini-cli...
+   Accelerating Git and IO performance...
+🐚 Configuring Git-aware prompt and productivity aliases...
+⚙️ Configuring Gemini CLI for mobile efficiency...
+  - folder gemini-cli-source already exists. Updating...
+Already up to date.
+🛠️ Applying Termux-specific patches...
+🔧 Applying managed patches from /data/data/com.termux/files/home/gemini-termux-patcher/patches...
+  - Applying 01-core-android-support.patch...
+error: patch failed: packages/cli/src/config/settings.ts:108
+error: packages/cli/src/config/settings.ts: patch does not apply
+error: patch failed: packages/core/src/config/storage.ts:139
+error: packages/core/src/config/storage.ts: patch does not apply
+error: patch failed: packages/core/src/utils/secure-browser-launcher.ts:80
+error: packages/core/src/utils/secure-browser-launcher.ts: patch does not apply
+error: patch failed: packages/core/src/utils/shell-utils.ts:672
+error: packages/core/src/utils/shell-utils.ts: patch does not apply
+    ⚠️ Warning: Failed to apply 01-core-android-support.patch, it might be already applied or have conflicts.
+  - Applying 02-clipboard-and-notifications.patch...
+error: patch failed: packages/cli/src/utils/terminalNotifications.ts:82
+error: packages/cli/src/utils/terminalNotifications.ts: patch does not apply
+    ⚠️ Warning: Failed to apply 02-clipboard-and-notifications.patch, it might be already applied or have conflicts.
+  - Applying 03-pty-fix.patch...
+error: patch failed: packages/core/src/utils/getPty.ts:18
+error: packages/core/src/utils/getPty.ts: patch does not apply
+    ⚠️ Warning: Failed to apply 03-pty-fix.patch, it might be already applied or have conflicts.
+  - Applying 04-generic-optimizations.patch...
+error: patch failed: .gemini/skills/ci/scripts/ci.mjs:1
+error: .gemini/skills/ci/scripts/ci.mjs: patch does not apply
+error: patch failed: .gemini/skills/pr-address-comments/scripts/fetch-pr-info.js:1
+error: .gemini/skills/pr-address-comments/scripts/fetch-pr-info.js: patch does not apply
+error: patch failed: .github/scripts/pr-triage.sh:1
+error: .github/scripts/pr-triage.sh: patch does not apply
+error: patch failed: docs/cli/plan-mode.md:328
+error: docs/cli/plan-mode.md: patch does not apply
+error: patch failed: docs/examples/proxy-script.md:5
+error: docs/examples/proxy-script.md: patch does not apply
+error: patch failed: docs/hooks/best-practices.md:128
+error: docs/hooks/best-practices.md: patch does not apply
+error: patch failed: docs/hooks/writing-hooks.md:33
+error: docs/hooks/writing-hooks.md: patch does not apply
+error: patch failed: integration-tests/mcp_server_cyclic_schema.test.ts:28
+error: integration-tests/mcp_server_cyclic_schema.test.ts: patch does not apply
+error: patch failed: integration-tests/simple-mcp-server.test.ts:22
+error: integration-tests/simple-mcp-server.test.ts: patch does not apply
+error: patch failed: packages/a2a-server/src/http/server.ts:1
+error: packages/a2a-server/src/http/server.ts: patch does not apply
+error: patch failed: packages/cli/index.ts:1
+error: packages/cli/index.ts: patch does not apply
+error: patch failed: packages/cli/src/commands/gemma/platform.ts:224
+error: packages/cli/src/commands/gemma/platform.ts: patch does not apply
+error: patch failed: packages/cli/src/ui/utils/clipboardUtils.ts:162
+error: packages/cli/src/ui/utils/clipboardUtils.ts: patch does not apply
+error: patch failed: packages/core/src/skills/builtin/skill-creator/scripts/init_skill.cjs:1
+error: packages/core/src/skills/builtin/skill-creator/scripts/init_skill.cjs: patch does not apply
+error: patch failed: packages/core/src/skills/builtin/skill-creator/scripts/package_skill.cjs:1
+error: packages/core/src/skills/builtin/skill-creator/scripts/package_skill.cjs: patch does not apply
+error: patch failed: packages/core/src/utils/paths.ts:494
+error: packages/core/src/utils/paths.ts: patch does not apply
+error: patch failed: scripts/aggregate_evals.js:1
+error: scripts/aggregate_evals.js: patch does not apply
+error: patch failed: scripts/copy_files.js:1
+error: scripts/copy_files.js: patch does not apply
+error: patch failed: scripts/create_alias.sh:1
+error: scripts/create_alias.sh: patch does not apply
+error: patch failed: scripts/get-release-version.js:1
+error: scripts/get-release-version.js: patch does not apply
+error: patch failed: scripts/lint.js:1
+error: scripts/lint.js: patch does not apply
+error: patch failed: scripts/local_telemetry.js:1
+error: scripts/local_telemetry.js: patch does not apply
+error: patch failed: scripts/releasing/create-patch-pr.js:1
+error: scripts/releasing/create-patch-pr.js: patch does not apply
+error: patch failed: scripts/releasing/patch-comment.js:1
+error: scripts/releasing/patch-comment.js: patch does not apply
+error: patch failed: scripts/releasing/patch-create-comment.js:1
+error: scripts/releasing/patch-create-comment.js: patch does not apply
+error: patch failed: scripts/releasing/patch-trigger.js:1
+error: scripts/releasing/patch-trigger.js: patch does not apply
+error: patch failed: scripts/telemetry.js:1
+error: scripts/telemetry.js: patch does not apply
+error: patch failed: scripts/telemetry_gcp.js:1
+error: scripts/telemetry_gcp.js: patch does not apply
+error: patch failed: scripts/telemetry_genkit.js:1
+error: scripts/telemetry_genkit.js: patch does not apply
+error: patch failed: scripts/telemetry_utils.js:1
+error: scripts/telemetry_utils.js: patch does not apply
+    ⚠️ Warning: Failed to apply 04-generic-optimizations.patch, it might be already applied or have conflicts.
+  - Applying 05-mobile-defaults.patch...
+error: patch failed: packages/cli/src/config/settingsSchema.ts:528
+error: packages/cli/src/config/settingsSchema.ts: patch does not apply
+    ⚠️ Warning: Failed to apply 05-mobile-defaults.patch, it might be already applied or have conflicts.
+🔧 Running additional programmatic optimizations...
+  - Fixing shebangs...
+sed: no input files
